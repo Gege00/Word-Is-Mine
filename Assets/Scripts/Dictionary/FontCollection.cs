@@ -44,15 +44,38 @@ public struct Character{
     }
 }
 
-[Serializable]
-public class FontCollection : ScriptableObject {
+public struct CharacterData{
+    public char c;
+    public Texture2D texture;
 
+    public CharacterData(char c, Texture2D texture)
+    {
+        this.c = c;
+        this.texture = texture;
+    }
+}
 
-    public List<Character> font= new List<Character>();
-    private int length;
+    [Serializable]
+ public class FontCollection : ScriptableObject {
+        public List<Character> font= new List<Character>();
+        private int length;
 
+  
+     public   CharacterData[] GetCharacters(string word)
+        {
+            char[] characters = word.ToCharArray();
+            CharacterData[] charData = new CharacterData[characters.Length];
+            int length = charData.Length;
+            for (int i = 0; i < length; i++)
+            {
+                charData[i] = new CharacterData(characters[i],GetSprite(characters[i]));
+            }
+            Utils.Shuffle<CharacterData>(charData);
+            return charData;
 
-    public Texture2D GetSprite(char c) {
+        }
+    
+     Texture2D GetSprite(char c) {
         length = font.Count;
         for (int i = 0; i < length; i++) {
 
@@ -62,6 +85,13 @@ public class FontCollection : ScriptableObject {
         }
         return Texture2D.whiteTexture;
         
+    }
+
+    public void Setup() {
+        for (int i = 'a'; i <'z'+1 ; i++) {
+            font.Add(new Character((Alphabet) i, null));
+        }
+
     }
 
 }

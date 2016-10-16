@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class Grenade : MonoBehaviour
 {
@@ -68,9 +69,9 @@ public class Grenade : MonoBehaviour
     }
 
     public void OnClick() {
-
-
-        Reset();
+        if (GrenadeLauncher.Validate(_charData.c)) {
+            Reset();
+        }
     }
 
 

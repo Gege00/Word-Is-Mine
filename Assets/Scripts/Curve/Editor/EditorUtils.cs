@@ -8,6 +8,7 @@ public class EditorUtils: Editor  {
     public static void CreateFontCollection() {
 
         FontCollection fontCollection = CreateInstance<FontCollection>();
+        fontCollection.Setup();
         AssetDatabase.CreateAsset(fontCollection,"Assets/Fonts/font.asset");
         AssetDatabase.SaveAssets();
 

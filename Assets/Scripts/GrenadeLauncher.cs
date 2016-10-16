@@ -24,23 +24,26 @@ public class GrenadeLauncher : MonoBehaviour {
 
     }
 
-    public void LaunchGrenades(string word,CharacterData[] charactersData) {
+    public void LaunchGrenades(WordData wordData) {
         if (_grenadeObjectPool == null) {
             PopulatePool();
         }
-        _actualWord = word;
+
+        _actualIndex = 0;
+        _actualWord = wordData.word;
+        CharacterData[] charactersData = wordData.charsData;
         int worldLength =_actualWord.Length;
-        //1. szó hossza szerinti felosztás
         int[] indicies = GetLauncherIndicies(worldLength);
         for (int i = 0; i < worldLength; i++) {
             _grenadeObjectPool[i].SetGrenade(splines[indicies[i]], Random.Range(launchSpeedMin, launchSpeedMax),charactersData[i]);
             _grenadeObjectPool[i].Launch();
         }
+        Debug.Log(_actualWord);
     }
 
-    public bool Validate(char c) {
-        if (_actualWord[_actualIndex] == c) {
-            _actualIndex++;
+    public static  bool Validate(char c) {
+        if (instance._actualWord[instance._actualIndex] == c) {
+            instance._actualIndex++;
             return true;
         }
         else {
