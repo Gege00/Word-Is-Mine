@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
+
 
 
 
@@ -38,6 +38,7 @@ public class WordArray {
     }
 }
 
+#if UNITY_EDITOR
 public class TextParser {
 
 
@@ -56,17 +57,18 @@ public class TextParser {
         }
         var dic = ScriptableObject.CreateInstance<WordCollection>();
         for (int i = 0; i < 4; i++) {
-           
-            dic.WordDictionary.Add(i+3,new WordArray(dictionaryArray[i].ToArray()));
-           
+
+            dic.WordDictionary.Add(i + 3, new WordArray(dictionaryArray[i].ToArray()));
+
         }
-        AssetDatabase.CreateAsset(dic, "Assets/Dictionary/words.asset");
-        AssetDatabase.SaveAssets();
+      UnityEditor.AssetDatabase.CreateAsset(dic, "Assets/Dictionary/words.asset");
+      UnityEditor.AssetDatabase.SaveAssets();
 
 
     }
+}
+#endif
 
- }
 
 
 

@@ -7,7 +7,7 @@ public class GameController : MonoBehaviour {
     public static GameController instance;
 
     [Range(3,6)]
-    public int difficultyLevel;
+    public int difficultyLevel=3;
 
     public GrenadeLauncher  GrenadeLauncher;
     public WordRequestManager WordRequestManager;
@@ -23,7 +23,10 @@ public class GameController : MonoBehaviour {
     }
 
 
-    public void StartLaunching() {
+    public void StartLaunching(int diffLevel=0) {
+        if (diffLevel > 0) {
+            difficultyLevel = diffLevel;
+        }
         WordRequestManager.AddRequest(difficultyLevel, 0, GrenadeLauncher.LaunchGrenades);
 
     }

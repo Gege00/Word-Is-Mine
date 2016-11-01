@@ -16,18 +16,23 @@ public class GrenadeLauncher : MonoBehaviour {
     private readonly int numberOfsplines = 6;
     private Grenade[] _grenadeObjectPool;
 
+    private UIController UIController;
+
     private string  _actualWord;
     private int     _actualIndex        =0;
 
     void OnEnable() {
         instance = this;
+        UIController = GameObject.FindObjectOfType<UIController>();
 
     }
 
     public void LaunchGrenades(WordData wordData) {
+
         if (_grenadeObjectPool == null) {
             PopulatePool();
         }
+        
 
         _actualIndex = 0;
         _actualWord = wordData.word;
@@ -38,7 +43,8 @@ public class GrenadeLauncher : MonoBehaviour {
             _grenadeObjectPool[i].SetGrenade(splines[indicies[i]], Random.Range(launchSpeedMin, launchSpeedMax),charactersData[i]);
             _grenadeObjectPool[i].Launch();
         }
-        Debug.Log(_actualWord);
+        UIController.SetText(_actualWord);
+       
     }
 
     public static  bool Validate(char c) {
