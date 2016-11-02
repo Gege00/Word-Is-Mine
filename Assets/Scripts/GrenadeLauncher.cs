@@ -19,6 +19,9 @@ public class GrenadeLauncher : MonoBehaviour {
     private UIController UIController;
 
     private string  _actualWord;
+    public string ActualWord {
+        get { return _actualWord;}
+    }
     private int     _actualIndex        =0;
 
     void OnEnable() {
@@ -43,8 +46,15 @@ public class GrenadeLauncher : MonoBehaviour {
             _grenadeObjectPool[i].SetGrenade(splines[indicies[i]], Random.Range(launchSpeedMin, launchSpeedMax),charactersData[i]);
             _grenadeObjectPool[i].Launch();
         }
-        UIController.SetText(_actualWord);
        
+       
+    }
+
+    public void ResetGrenades() {
+
+        foreach (var grenade in _grenadeObjectPool) {
+            grenade.Reset();
+        }
     }
 
     public static  bool Validate(char c) {

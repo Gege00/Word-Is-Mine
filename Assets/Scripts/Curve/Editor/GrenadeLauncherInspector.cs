@@ -15,7 +15,7 @@ public class GrenadeLauncherInspector : Editor {
         
         DrawDefaultInspector();
 
-        EditorGUILayout.MinMaxSlider( ref gl.launchSpeedMin, ref gl.launchSpeedMax,2f,6f);
+        EditorGUILayout.MinMaxSlider( ref gl.launchSpeedMin, ref gl.launchSpeedMax,0.2f,2f);
 
         if (GUILayout.Button("Launch")) {
            // gl.LaunchGrenades();

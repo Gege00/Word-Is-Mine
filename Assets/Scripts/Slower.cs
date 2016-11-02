@@ -12,10 +12,12 @@ public class Slower : MonoBehaviour {
     void OnTriggerEnter(Collider collider) {
         if (collider.gameObject.tag == "grenade") {
 
+          GameController.instance.ShowWordOnGUI();
           grenade=collider.gameObject.GetComponent<Grenade>();
           grenade.duration += slowingValue;
           grenade.ShowCharacter();
-            
+          collider.enabled = false;
+
         }
     }
 

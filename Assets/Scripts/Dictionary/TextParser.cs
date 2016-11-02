@@ -4,40 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-
-
-public class WordCollection: ScriptableObject {
-
-    public WordDictionary WordDictionary= new WordDictionary();
-
-
-    public string GetRandomWord(int wordLength) {
-        return  WordDictionary[wordLength].GetRandomWorld();
-    }
-
-}
-[System.Serializable()]
-public class WordDictionary : SerializableDictionaryBase<int,WordArray> {
-
-
-}
-
-[System.Serializable()]
-public class WordArray {
-
-    public string[] words;
-    
-
-    public WordArray(string[] words) {
-        this.words = words;
-    }
-
-
-    public string GetRandomWorld() {
-        return words[UnityEngine.Random.Range(0, words.Length)];
-    }
-}
-
 #if UNITY_EDITOR
 public class TextParser {
 
@@ -55,7 +21,7 @@ public class TextParser {
                 Debug.Log(w.Length + "-" + w);
             }
         }
-        var dic = ScriptableObject.CreateInstance<WordCollection>();
+        WordCollection dic = ScriptableObject.CreateInstance<WordCollection>();
         for (int i = 0; i < 4; i++) {
 
             dic.WordDictionary.Add(i + 3, new WordArray(dictionaryArray[i].ToArray()));

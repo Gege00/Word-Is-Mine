@@ -25,6 +25,7 @@ public class Grenade : MonoBehaviour
         Reset();
         moving = true;
         rotating = true;
+        GetComponent<Collider>().enabled = true;
         ObjectToRotate.GetComponent<Renderer>().enabled = true;
         rotation = new Vector3(0,Random.Range(0.8f,1), Random.Range(0.8f, 1));
         rotationTime = Random.Range(0.8f, 1.2f);
@@ -62,6 +63,7 @@ public class Grenade : MonoBehaviour
             if (_progress > 1f) {
                 _progress = 1f;
                 moving = false;
+                GameController.instance.WallHit();
             }
             transform.localPosition = spline.GetPoint(_progress);
             FaceToCamera();
@@ -69,6 +71,8 @@ public class Grenade : MonoBehaviour
         if (rotating) {
             iTween.RotateBy(gameObject, iTween.Hash("amount", rotation, "time", rotationTime, "easetype", iTween.EaseType.linear, "looptype", iTween.LoopType.none));
         }
+
+        
 
 
 
@@ -79,7 +83,9 @@ public class Grenade : MonoBehaviour
     
 
     public void Reset() {
-        gameObject.transform.localPosition = spline.GetPoint(0);
+        if (spline != null) {
+            gameObject.transform.localPosition = spline.GetPoint(0);
+        }
         _progress = 0f;
         moving = false;
 
