@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.Runtime.Remoting.Messaging;
+
+
 
 
 public class GrenadeLauncher : MonoBehaviour {
@@ -24,6 +25,13 @@ public class GrenadeLauncher : MonoBehaviour {
     }
     private int     _actualIndex        =0;
 
+    private bool _launching = false;
+
+    public bool IsLaunching {
+        get {return _launching;}
+        set { _launching = value; }
+    }
+
     void OnEnable() {
         instance = this;
         UIController = GameObject.FindObjectOfType<UIController>();
@@ -31,16 +39,17 @@ public class GrenadeLauncher : MonoBehaviour {
     }
 
     public void LaunchGrenades(WordData wordData) {
+        _launching = true;
 
         if (_grenadeObjectPool == null) {
             PopulatePool();
         }
         
 
-        _actualIndex = 0;
-        _actualWord = wordData.word;
+     
+        
         CharacterData[] charactersData = wordData.charsData;
-        int worldLength =_actualWord.Length;
+        int worldLength =wordData.word.Length;
         int[] indicies = GetLauncherIndicies(worldLength);
         for (int i = 0; i < worldLength; i++) {
             _grenadeObjectPool[i].SetGrenade(splines[indicies[i]], Random.Range(launchSpeedMin, launchSpeedMax),charactersData[i]);
@@ -51,26 +60,13 @@ public class GrenadeLauncher : MonoBehaviour {
     }
 
     public void ResetGrenades() {
-
+        
         foreach (var grenade in _grenadeObjectPool) {
             grenade.Reset();
         }
+
+        _launching = false;
     }
-
-    public static  bool Validate(char c) {
-        if (instance._actualWord[instance._actualIndex] == c) {
-            instance._actualIndex++;
-            return true;
-        }
-        else {
-            return false;
-        }
-
-
-
-    }
-
-
 
     void PopulatePool() {
         int numberOfSplines = splines.Length;

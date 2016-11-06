@@ -16,6 +16,15 @@ public class EditorUtils: Editor  {
     }
 
 
+    [MenuItem("Tools/Create new difficultyLevel")]
+    public static void CreateNewDiffLevel() {
+
+        AssetDatabase.CreateAsset(CreateInstance<Difficulty>(), "Assets/Difficulties/NewDiff.asset");
+        AssetDatabase.SaveAssets();
+
+    }
+
+
 
 
 

@@ -98,7 +98,7 @@ public class Grenade : MonoBehaviour
     }
 
     public void OnClick() {
-        if (GrenadeLauncher.Validate(_charData.c)) {
+        if (GameController.Validate(_charData.c)) {
             Reset();
         }
     }

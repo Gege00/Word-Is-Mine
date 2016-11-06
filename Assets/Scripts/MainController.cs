@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class MainController : MonoBehaviour {
 
@@ -21,5 +22,20 @@ public class MainController : MonoBehaviour {
         }
         
     }
-   
+
+    void Update() {
+
+        if (Input.GetKey(KeyCode.Escape) && SceneManager.GetActiveScene().buildIndex==1) {
+            SceneManager.LoadScene(0);
+
+        }
+    }
+
+
+    public void StartGame() {
+
+       
+        SceneManager.LoadScene(1);
+    }
+
 }

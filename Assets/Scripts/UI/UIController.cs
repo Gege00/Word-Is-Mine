@@ -3,8 +3,8 @@ using System.Collections;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour {
-
-    public Text wordText;
+    
+    public  Text wordText;
 
 
 

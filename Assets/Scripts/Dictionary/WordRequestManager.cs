@@ -38,15 +38,20 @@ public class WordRequestManager : MonoBehaviour {
     private WordRequest currentWordRequest;
 
 
+    void Awake() {
+        Init();
+    }
 
-    void OnEnable() {
+    void Init() {
+
         instance = this;
     }
 
 
-    public static void AddRequest(int diffLevel,int numberOfFakes, Action<WordData> callback) {
-       instance.requests.Enqueue(new WordRequest(diffLevel,numberOfFakes,callback));
-       instance.TryProcessNext();
+    public static void AddRequest(int minLength,int maxLength, Action<WordData> callback) {
+       
+        instance.requests.Enqueue(new WordRequest(UnityEngine.Random.Range(minLength,maxLength),0,callback));   
+        instance.TryProcessNext();
     }
 
     public void FinishProcessingRequest(WordData wordData) {
@@ -66,6 +71,7 @@ public class WordRequestManager : MonoBehaviour {
 
     public IEnumerator ProcessRequests() {
         yield return 0;
+        Debug.Log(currentWordRequest.difficultyLevel);
         string word = WordCollection.GetRandomWord(currentWordRequest.difficultyLevel);
         CharacterData[] charsData = FontCollection.GetCharacters(word);
         if (word != null && charsData.Length > 0) {
