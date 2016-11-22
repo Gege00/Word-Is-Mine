@@ -1,6 +1,8 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections;
+using System.Security.Policy;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameController : MonoBehaviour {
@@ -14,13 +16,11 @@ public class GameController : MonoBehaviour {
     [HideInInspector]
     public static GameController instance;
 
-    [Range(3,6)]
-    public int difficultyLevel=3;
-
-    public Difficulty[] Difficulties;
-    public GrenadeLauncher  GrenadeLauncher;
+   
+    public GrenadeLauncher[]  GrenadeLaunchers;
     public WordRequestManager WordRequestManager;
     public UIController UIController;
+    public CameraController CameraController;
     public Slower Slower;
     public Text HealthText;
     public Text ScoreText;
@@ -29,10 +29,12 @@ public class GameController : MonoBehaviour {
     
     private Player player;
     private byte health;
+    private uint waveCount;
 
-    private GameRun _actualGameRun;
-    private int     _diffIndex;
+    private GrenadeLauncher currentGrenadeLauncher;
 
+
+    private uint _index;
     private WordData _actualWord;
     private int _actualIndex;
 
@@ -55,64 +57,92 @@ public class GameController : MonoBehaviour {
     }
 
     public void NewGame() {
-        _actualGameRun = ScriptableObject.CreateInstance<GameRun>();
+        _index = 0;
         health = 6;
-        _diffIndex = 1;
         HealthText.text = health.ToString();
-        SetSpeed();
-        StartCoroutine(StartGame());
+        currentGrenadeLauncher = GrenadeLaunchers[_index];
+        CameraController.SwitchCameraTo((int)_index);
+        StartCoroutine(StartStage());
 
     }
 
-    private IEnumerator StartGame() {
-
-        while (health>0) {
+    private IEnumerator StartStage() {
+        yield return StartCoroutine(CountDown());
+        waveCount = 0;
+        while (health>0 && waveCount<currentGrenadeLauncher.stage.numberOfWaves  ) {
             //CheckDifficulty();
+            Debug.Log(waveCount);
            StartLaunching();
-           GrenadeLauncher.IsLaunching = true;
-           yield return new WaitWhile(()=>GrenadeLauncher.IsLaunching);
+           currentGrenadeLauncher.IsLaunching = true;
+           yield return new WaitWhile(() => currentGrenadeLauncher.IsLaunching);
         }
-        GameOver();
-       
-         
+        if (health == 0) {
+           StartCoroutine(GameOver());
+        }
+        else {
+            SwitchStage();
+
+        }
+
+
+
+    }
+
+    private void SwitchStage() {
+        _index++;
+        currentGrenadeLauncher = GrenadeLaunchers[_index];
+        CameraController.SwitchCameraTo((int)_index);
+        if (_index < 4) {
+            StartCoroutine(StartStage());
+        }
+    }
+
+    private IEnumerator CountDown() {
+        UIController.wordText.text = currentGrenadeLauncher.stage.stageName;
+        yield return new WaitForSeconds(1f);
+        int count = 3;
+        UIController.wordText.text = count.ToString();
+        while (count > 0) {
+            yield return new WaitForSeconds(1f);
+            count--;
+            if (count == 0) {
+                UIController.wordText.text = "GO!";
+            }
+            else {
+                UIController.wordText.text = count.ToString();
+            }
+        }
+
     }
 
 
     private void SetSpeed() {
-        GrenadeLauncher.launchSpeedMin = Difficulties[_actualGameRun.DiffLevel].LaunchSpeed;
-        GrenadeLauncher.launchSpeedMax = Difficulties[_actualGameRun.DiffLevel].LaunchSpeed+0.2f;
-        Slower.slowingValue = Difficulties[_actualGameRun.DiffLevel].SlowSpeed;
+    //    GrenadeLauncher.launchSpeedMin = Difficulties[_actualGameRun.DiffLevel].LaunchSpeed;
+    //    GrenadeLauncher.launchSpeedMax = Difficulties[_actualGameRun.DiffLevel].LaunchSpeed+0.2f;
+    //    Slower.slowingValue = Difficulties[_actualGameRun.DiffLevel].SlowSpeed;
     }
 
-    private void GameOver() {
-
-        StopCoroutine(StartGame());
-        _actualGameRun.GameOver();
-
-
+    private IEnumerator GameOver() {
+        UIController.wordText.text="GameOver";
+        yield return new WaitForSeconds(1.5f);
+        SceneManager.LoadScene(0);
     }
 
-    private void CheckDifficulty() {
-        if (_actualGameRun.Streak > Difficulties[_diffIndex].StreakLimit*_actualIndex) {
-            _diffIndex++;
-            SetSpeed();
-        }
-    }
-
-
-
+   
 
     public void StartLaunching() {
 
        // WordRequestManager.AddRequest(Difficulties[_actualGameRun.DiffLevel].WordLengthMin, Difficulties[_actualGameRun.DiffLevel].WordLengthMax,WordRequestCallback);
-        WordRequestManager.AddRequest(3, 6,WordRequestCallback);
+        WordRequestManager.AddRequest(currentGrenadeLauncher.stage.wordLengthMin, currentGrenadeLauncher.stage.worldLengthMax, WordRequestCallback);
 
     }
 
     public void WordRequestCallback(WordData wordData) {
         _actualWord = wordData;
         _actualIndex = 0;
-        GrenadeLauncher.LaunchGrenades(wordData);
+        currentGrenadeLauncher.LaunchGrenades(wordData);
+        waveCount++;
+
     }
 
     public void ShowWordOnGUI() {
@@ -123,21 +153,20 @@ public class GameController : MonoBehaviour {
     public void WallHit() {
         health--;
         HealthText.text = health.ToString();
-        _actualGameRun.Streak = 0;
-        GrenadeLauncher.ResetGrenades();
+        currentGrenadeLauncher.ResetGrenades();
         UIController.Reset();
     }
 
     public void GetScore() {
-        _actualGameRun.Streak++;
-        ScoreText.text=_actualGameRun.IncreaseScore(DEFAULTPOINT).ToString();
+       
+        ScoreText.text += DEFAULTPOINT;
         UIController.Reset();
-        GrenadeLauncher.ResetGrenades();
+        currentGrenadeLauncher.ResetGrenades();
 
     }
 
     private void Miss() {
-        _actualGameRun.Streak = 0;
+       
 
     }
 

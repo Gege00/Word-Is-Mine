@@ -16,10 +16,10 @@ public class EditorUtils: Editor  {
     }
 
 
-    [MenuItem("Tools/Create new difficultyLevel")]
-    public static void CreateNewDiffLevel() {
+    [MenuItem("Tools/Create new stage")]
+    public static void CreateNewStage() {
 
-        AssetDatabase.CreateAsset(CreateInstance<Difficulty>(), "Assets/Difficulties/NewDiff.asset");
+        AssetDatabase.CreateAsset(CreateInstance<Stage>(), "Assets/Stages/NewStage.asset");
         AssetDatabase.SaveAssets();
 
     }

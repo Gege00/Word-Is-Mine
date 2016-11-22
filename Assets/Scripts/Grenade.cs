@@ -44,11 +44,11 @@ public class Grenade : MonoBehaviour
         characterContainer.GetComponent<Renderer>().enabled = true;
     }
 
-    public void SetGrenade(BezierSpline spline, float speed, CharacterData charData) {
+    public void SetGrenade(BezierSpline spline, float speed, CharacterData charData,Camera camera) {
         characterContainer.GetComponent<Collider>().enabled = false;
         characterContainer.GetComponent<Renderer>().enabled = false;
         _characterMaterial = characterContainer.GetComponent<MeshRenderer>().material;
-        _mainCamera = FindObjectOfType<Camera>();
+        _mainCamera = camera;
         this.spline = spline;
         duration = speed;
         _charData = charData;
@@ -94,7 +94,7 @@ public class Grenade : MonoBehaviour
     }
 
     void FaceToCamera() {
-        characterContainer.transform.LookAt(-_mainCamera.transform.position,Vector3.up);
+        characterContainer.transform.LookAt(_mainCamera.transform.localRotation *- _mainCamera.transform.position, _mainCamera.transform.localRotation * Vector3.up);
     }
 
     public void OnClick() {

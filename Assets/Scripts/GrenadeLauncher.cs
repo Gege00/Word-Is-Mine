@@ -6,14 +6,15 @@ using System.Collections;
 
 public class GrenadeLauncher : MonoBehaviour {
 
-
+    public Camera stageCamera;
+    public Slower slower;
+    public Stage stage;
     public BezierSpline[] splines;
     public GameObject grenadePrefab;
-    public float launchSpeedMin;
-    public float launchSpeedMax;
+    
 
 
-    private static GrenadeLauncher instance;
+   
     private readonly int numberOfsplines = 6;
     private Grenade[] _grenadeObjectPool;
 
@@ -33,7 +34,6 @@ public class GrenadeLauncher : MonoBehaviour {
     }
 
     void OnEnable() {
-        instance = this;
         UIController = GameObject.FindObjectOfType<UIController>();
 
     }
@@ -44,15 +44,12 @@ public class GrenadeLauncher : MonoBehaviour {
         if (_grenadeObjectPool == null) {
             PopulatePool();
         }
-        
-
-     
-        
+        slower.slowingValue = stage.slowingSpeed;
         CharacterData[] charactersData = wordData.charsData;
         int worldLength =wordData.word.Length;
         int[] indicies = GetLauncherIndicies(worldLength);
         for (int i = 0; i < worldLength; i++) {
-            _grenadeObjectPool[i].SetGrenade(splines[indicies[i]], Random.Range(launchSpeedMin, launchSpeedMax),charactersData[i]);
+            _grenadeObjectPool[i].SetGrenade(splines[indicies[i]], stage.launchspeed,charactersData[i],stageCamera);
             _grenadeObjectPool[i].Launch();
         }
        
